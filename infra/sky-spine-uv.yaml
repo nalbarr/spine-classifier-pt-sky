@@ -1,0 +1,35 @@
+envs:
+  DGLBACKEND: pytorch
+
+resources:
+  # accelerators: K80:1
+
+workdir: .
+
+file_mounts:
+  /hello-s3:
+    name: hello-s3-na
+    source: data
+    store: s3
+    mode: MOUNT
+
+setup: |
+  echo "*** setup"
+
+  conda deactivate
+
+  pip install uv
+  uv venv
+  source .venv/bin/activate
+
+  uv pip install -r requirements.txt
+
+
+run: |
+  echo "*** run"
+
+  conda deactivate
+
+  source .venv/bin/activate
+
+  python train.py
