@@ -16,20 +16,12 @@ file_mounts:
 setup: |
   echo "*** setup"
 
-  conda deactivate
-
-  pip install uv
   uv venv
   source .venv/bin/activate
 
   uv pip install -r requirements.txt
 
-
 run: |
   echo "*** run"
 
-  conda deactivate
-
-  source .venv/bin/activate
-
-  python train.py
+  uv run train.py

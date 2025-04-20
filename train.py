@@ -1,7 +1,8 @@
-import numpy as np
+# import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
+
+# import matplotlib.pyplot as plt
 
 import torch
 import torch.nn as nn
@@ -12,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
 
+
 def read_data():
     # read data
     df = pd.read_csv("./data/spine.csv")
@@ -21,14 +23,14 @@ def read_data():
 
 def prep_data(df):
     # drop last column
-    df = df.drop(df.columns[-1],axis=1)
+    df = df.drop(df.columns[-1], axis=1)
     df.head()
     return df
 
 
 def inspect_data(df):
     # class distribution
-    sns.countplot(x = 'Class_att', data=df)
+    sns.countplot(x="Class_att", data=df)
 
 
 def map_target_labels(df):
@@ -37,26 +39,26 @@ def map_target_labels(df):
     # df = df['Class_att'].replace(map_dict)
 
     # map target labels as numerical - 0 = normal, 1 = abnormal
-    df['Class_att'] = df['Class_att'].astype('category')
-    map_dict = {
-        'Abnormal': 1,
-        'Normal': 0
-    }
-    df['Class_att'].replace(map_dict, inplace=True)
+    df["Class_att"] = df["Class_att"].astype("category")
+    map_dict = {"Abnormal": 1, "Normal": 0}
+    df["Class_att"].replace(map_dict, inplace=True)
     return df
 
 
 def get_X_and_y(df):
     # create input and output data
     X = df.iloc[:, 0:-1]
-    # NAA. Not sure why there is an extra Unnamed column.  I had to manually drop last column.
+    # NAA. Not sure why there is an extra Unnamed column.
+    #   I had to manually drop last column.
     y = df.iloc[:, -1]
     return X, y
 
 
 def get_train_test(X, y):
     # split data for train, test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=69)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.33, random_state=69
+    )
 
 
 def standardize_input(X_train, X_test):
@@ -80,7 +82,7 @@ class TrainData(Dataset):
     def __getitem__(self, index):
         return self.X_data[index], self.y_data[index]
 
-    def __len__ (self):
+    def __len__(self):
         return len(self.X_data)
 
 
@@ -92,7 +94,7 @@ class TestData(Dataset):
     def __getitem__(self, index):
         return self.X_data[index]
 
-    def __len__ (self):
+    def __len__(self):
         return len(self.X_data)
 
 
@@ -143,7 +145,7 @@ def binary_acc(y_pred, y_test):
     y_pred_tag = torch.round(torch.sigmoid(y_pred))
 
     correct_results_sum = (y_pred_tag == y_test).sum().float()
-    acc = correct_results_sum/y_test.shape[0]
+    acc = correct_results_sum / y_test.shape[0]
     acc = torch.round(acc * 100)
 
     return acc
@@ -154,7 +156,7 @@ def train(model, train_loader, device, optimizer, criterion):
     EPOCHS = 50
     BATCH_SIZE = 64
     model.train()
-    for e in range(1, EPOCHS+1):
+    for e in range(1, EPOCHS + 1):
         epoch_loss = 0
         epoch_acc = 0
         for X_batch, y_batch in train_loader:
@@ -173,8 +175,9 @@ def train(model, train_loader, device, optimizer, criterion):
             epoch_loss += loss.item()
             epoch_acc += acc.item()
 
-
-    print(f'Epoch {e+0:03}: | Loss: {epoch_loss/len(train_loader):.5f} | Acc: {epoch_acc/len(train_loader):.3f}')
+    print(
+        f"Epoch {e+0:03}: | Loss: {epoch_loss/len(train_loader):.5f} | Acc: {epoch_acc/len(train_loader):.3f}"
+    )
 
 
 def get_predictions(model, test_loader, device):
@@ -199,12 +202,13 @@ def main():
     df = map_target_labels(df)
 
     X, y = get_X_and_y(df)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=69)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.33, random_state=69
+    )
     X_train, X_test = standardize_input(X_train, X_test)
     dump_X_and_y(X_train, y_train)
 
-    train_data = TrainData(torch.FloatTensor(X_train),
-                       torch.FloatTensor(y_train))
+    train_data = TrainData(torch.FloatTensor(X_train), torch.FloatTensor(y_train))
     test_data = TestData(torch.FloatTensor(X_test))
 
     BATCH_SIZE = 64
@@ -222,6 +226,5 @@ def main():
     print(classification_report(y_test, y_pred_list))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
