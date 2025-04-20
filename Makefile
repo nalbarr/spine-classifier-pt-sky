@@ -6,6 +6,8 @@ help:
 	@echo make run
 	@echo make run-ui
 	@echo ""
+	@echo make install
+	@echo ""
 	@echo make sky-aws-init
 	@echo ""
 	@echo make sky check
@@ -20,23 +22,42 @@ help:
 	@echo make sky-spot-launch
 	@echo make sky-spot-logs
 
+lint:
+	flake8 train.py
+
+format:
+	black train.py
+
 run:
 	python train.py
 
 run-ui:
 	jupyter lab $(NOTEBOOK_LOCAL)
 
+# https://docs.skypilot.co/en/latest/getting-started/installation.html
+install:
+	@echo NOTE: install uv
+	@echo uv venv --seed --python 3.10
+	@echo uv pip install "skypilot[kubernetes,aws]"
+
+	@echo NOTE: uv sync
+	@echo uv venv
+	@echo source .venv/bin/activate
+	@echo uv sync
+	@echo uv run <script>
+
 sky-aws-init:
-	@echo ""
+	@echo NOTE: set AWS credentials!!!
+	@echo "source ~/aws-utils/set-<aws_env>.sh"
 
 sky-check:
 	sky check
 
 sky-launch:
-	sky launch -c spine infra/sky-spine-uv.yaml
+	sky launch -c spine --cloud aws infra/sky-spine-uv.yaml
 
 sky-exec:
-	sky exec spine  infra/sky-spine-uv.yaml
+	sky exec spine infra/sky-spine-uv.yaml
 
 sky-status:
 	sky status -a
@@ -51,5 +72,5 @@ sky-down:
 	sky down spine
 
 sky-spot-launch:
-	sky spot launch -n spine infra/sky-spine-uv.yaml
+	sky launch -c spine -spot-instance infra/sky-spine-uv.yaml
 
