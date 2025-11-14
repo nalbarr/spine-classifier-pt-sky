@@ -1,4 +1,4 @@
-NOTEBOOK_LOCAL=model/spine_binary_classifier_pytorch.ipynb
+NOTEBOOK_LOCAL=notebook/spine_binary_classifier_pytorch.ipynb
 HOST=localhost:8888
 NOTEBOOK_URL=http://localhost:8888/lab/tree/model/spine_binary_classifier_pytorch.ipynb
 
@@ -7,6 +7,11 @@ help:
 	@echo make run-ui
 	@echo ""
 	@echo make install
+	@echo ""
+	@echo make lint
+	@echo make format
+	@echo ""
+	@echo make marimo-edit
 	@echo ""
 	@echo make sky-aws-init
 	@echo ""
@@ -23,10 +28,12 @@ help:
 	@echo make sky-spot-logs
 
 lint:
-	flake8 train.py
+	# flake8 train.py
+	ruff check
 
 format:
-	black train.py
+	# black train.py
+	ruff format
 
 run:
 	python train.py
@@ -34,11 +41,14 @@ run:
 run-ui:
 	jupyter lab $(NOTEBOOK_LOCAL)
 
+marimo-edit:
+	marimo edit notebook/marimo.py
+
 # https://docs.skypilot.co/en/latest/getting-started/installation.html
 install:
 	@echo NOTE: install uv
-	@echo uv venv --seed --python 3.10
-	@echo uv pip install "skypilot[kubernetes,aws]"
+	@echo uv venv --seed --python 3.11
+	@echo uv pip install "skypilot[aws]"
 
 	@echo NOTE: uv sync
 	@echo uv venv

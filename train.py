@@ -1,8 +1,5 @@
-# import numpy as np
 import pandas as pd
 import seaborn as sns
-
-# import matplotlib.pyplot as plt
 
 import torch
 import torch.nn as nn
@@ -87,7 +84,6 @@ class TrainData(Dataset):
 
 
 class TestData(Dataset):
-
     def __init__(self, X_data):
         self.X_data = X_data
 
@@ -176,7 +172,7 @@ def train(model, train_loader, device, optimizer, criterion):
             epoch_acc += acc.item()
 
     print(
-        f"Epoch {e+0:03}: | Loss: {epoch_loss/len(train_loader):.5f} | Acc: {epoch_acc/len(train_loader):.3f}"
+        f"Epoch {e + 0:03}: | Loss: {epoch_loss / len(train_loader):.5f} | Acc: {epoch_acc / len(train_loader):.3f}"
     )
 
 
