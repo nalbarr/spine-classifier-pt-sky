@@ -1,7 +1,8 @@
- numpy
- pandas
- scikit-learn
- matplotlib
- seaborn
- jupyterlab
- torch
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+jupyterlab
+torch
+marimo
